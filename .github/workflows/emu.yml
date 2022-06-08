@@ -3,9 +3,9 @@ name: EMU Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, opt-fanin-ssit ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, opt-fanin-ssit ]
 
 jobs:
   generate-verilog:
