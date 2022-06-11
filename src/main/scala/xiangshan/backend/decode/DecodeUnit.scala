@@ -34,15 +34,16 @@ abstract trait DecodeConstants {
   def Y = BitPat("b1")
 
   def decodeDefault: List[BitPat] = // illegal instruction
-    //   srcType(0)   srcType(1)   srcType(2)   fuType      fuOpType    rfWen  
-    //   |            |            |            |           |           |  fpWen
-    //   |            |            |            |           |           |  |  isXSTrap
-    //   |            |            |            |           |           |  |  |  noSpecExec
-    //   |            |            |            |           |           |  |  |  |  blockBackward
-    //   |            |            |            |           |           |  |  |  |  |  flushPipe
-    //   |            |            |            |           |           |  |  |  |  |  |  isRVF
-    //   |            |            |            |           |           |  |  |  |  |  |  |  selImm
-    List(SrcType.DC, SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.sll, N, N, N, N, N, N, N, SelImm.INVALID_INSTR) // Use SelImm to indicate invalid instr
+    //   TargetType(0)    TargetType(1)    srcType(0)  srcType(1)  srcType(2)  fuType      fuOpType       rfWen
+    //   |                |                |           |           |           |           |              |  fpWen
+    //   |                |                |           |           |           |           |              |  |  isXSTrap
+    //   |                |                |           |           |           |           |              |  |  |  noSpecExec
+    //   |                |                |           |           |           |           |              |  |  |  |  blockBackward
+    //   |                |                |           |           |           |           |              |  |  |  |  |  flushPipe
+    //   |                |                |           |           |           |           |              |  |  |  |  |  |  isRVF
+    //   |                |                |           |           |           |           |              |  |  |  |  |  |  |  isRVDataflow
+    //   |                |                |           |           |           |           |              |  |  |  |  |  |  |  |  selImm
+    List(TargetType.None, TargetType.None, SrcType.DC, SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.sll, N, N, N, N, N, N, N, N, SelImm.INVALID_INSTR) // Use SelImm to indicate invalid instr
 
     val table: Array[(BitPat, List[BitPat])]
 }
@@ -58,6 +59,14 @@ trait DecodeUnitConstants
   val RS2_LSB = 20
   val RS3_MSB = 31
   val RS3_LSB = 27
+
+  // Dataflow
+  val PR_LSB = 11
+  val PR_MSB = 11
+  val T1_LSB = 12
+  val T1_MSB = 21
+  val T2_LSB = 22
+  val T2_MSB = 31
 }
 
 /**
@@ -444,6 +453,13 @@ object XSTrapDecode extends DecodeConstants {
   )
 }
 
+/*
+ * Dataflow Decode
+ */
+object DataflowDecode extends DecodeConstants {
+  val table: Array[(BitPat, List[BitPat])] = Array()
+}
+
 //object Imm32Gen {
 //  def apply(sel: UInt, inst: UInt) = {
 //    val sign = Mux(sel === SelImm.IMM_Z, 0.S, inst(31).asSInt)
@@ -523,6 +539,14 @@ case class Imm_B6() extends Imm(6){
   }
 }
 
+case class Imm_BD() extends Imm( len = 20) {
+  override def do_toImm32(minBits: UInt): UInt = SignExt(Cat(minBits, 0.U(1.W)), 32)
+
+  override def minBitsFromInstr(instr: UInt): UInt = {
+    Cat(instr(31), instr(30, 12))
+  }
+}
+
 object ImmUnion {
   val I = Imm_I()
   val S = Imm_S()
@@ -531,7 +555,8 @@ object ImmUnion {
   val J = Imm_J()
   val Z = Imm_Z()
   val B6 = Imm_B6()
-  val imms = Seq(I, S, B, U, J, Z, B6)
+  val BD = Imm_BD() // Dataflow Branch Imm
+  val imms = Seq(I, S, B, U, J, Z, B6, BD)
   val maxLen = imms.maxBy(_.len).len
   val immSelMap = Seq(
     SelImm.IMM_I,
@@ -540,7 +565,8 @@ object ImmUnion {
     SelImm.IMM_U,
     SelImm.IMM_UJ,
     SelImm.IMM_Z,
-    SelImm.IMM_B6
+    SelImm.IMM_B6,
+    SelImm.IMM_BD
   ).zip(imms)
   println(s"ImmUnion max len: $maxLen")
 }
@@ -577,7 +603,8 @@ class DecodeUnit(implicit p: Parameters) extends XSModule with DecodeUnitConstan
 
   ctrl_flow := io.enq.ctrl_flow
 
-  val decode_table = XDecode.table ++ FDecode.table ++ FDivSqrtDecode.table ++ X64Decode.table ++ XSTrapDecode.table ++ BDecode.table ++ CBODecode.table ++ SvinvalDecode.table
+  val decode_table = XDecode.table ++ FDecode.table ++ FDivSqrtDecode.table ++ X64Decode.table ++ XSTrapDecode.table ++ BDecode.table ++ CBODecode.table ++ SvinvalDecode.table ++
+    DataflowDecode.table
 
   // output
   cf_ctrl.cf := ctrl_flow
@@ -598,6 +625,12 @@ class DecodeUnit(implicit p: Parameters) extends XSModule with DecodeUnitConstan
   cs.lsrc(2) := ctrl_flow.instr(RS3_MSB, RS3_LSB)
   // read dest location
   cs.ldest := ctrl_flow.instr(RD_MSB, RD_LSB)
+
+  // read explicit target location
+  cs.target(0) := ctrl_flow.instr(T1_MSB, T1_LSB)
+  cs.target(1) := ctrl_flow.instr(T2_MSB, T2_LSB)
+  // read predicate
+  cs.PR := ctrl_flow.instr(PR_MSB, PR_LSB)
 
   // fill in exception vector
   cf_ctrl.cf.exceptionVec := io.enq.ctrl_flow.exceptionVec
@@ -678,4 +711,7 @@ class DecodeUnit(implicit p: Parameters) extends XSModule with DecodeUnitConstan
     io.deq.cf_ctrl.ctrl.isRVF, io.deq.cf_ctrl.ctrl.imm)
   XSDebug("out: excepVec=%b intrVec=%b\n",
     io.deq.cf_ctrl.cf.exceptionVec.asUInt, io.deq.cf_ctrl.cf.intrVec.asUInt)
+  XSDebug("out: isRVDataflow=%d targetType(0)=%b target(0)=%d targetType(1)=%b target(1)=%d PR=%b",
+    io.deq.cf_ctrl.ctrl.isRVDataflow, io.deq.cf_ctrl.ctrl.targetType(0), io.deq.cf_ctrl.ctrl.target(0),
+    io.deq.cf_ctrl.ctrl.targetType(1), io.deq.cf_ctrl.ctrl.target(1), io.deq.cf_ctrl.ctrl.PR)
 }

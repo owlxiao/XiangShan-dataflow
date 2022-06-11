@@ -44,6 +44,21 @@ package object xiangshan {
     def apply() = UInt(2.W)
   }
 
+  // EDGE Target Format
+  object TargetType {
+    def None = "b00".U
+    def Reg  = "b01".U
+    def BC   = "b10".U // Broadcast
+    def OB   = "b11".U // Operator Buffer
+
+    def isNone(TargetType: UInt) = TargetType===None
+    def isReg(TargetType: UInt) = TargetType===Reg
+    def isBC(TargetType: UInt) = TargetType===BC
+    def isOB(TargetType: UInt) = TargetType===OB
+
+    def apply() = UInt(2.W)
+  }
+
   object SrcState {
     def busy    = "b0".U
     def rdy     = "b1".U
@@ -496,6 +511,7 @@ package object xiangshan {
     def IMM_Z  = "b0101".U
     def INVALID_INSTR = "b0110".U
     def IMM_B6 = "b1000".U
+    def IMM_BD = "b1001".U
 
     def apply() = UInt(4.W)
   }

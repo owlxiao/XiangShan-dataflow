@@ -156,6 +156,10 @@ class CtrlSignals(implicit p: Parameters) extends XSBundle {
   val srcType = Vec(3, SrcType())
   val lsrc = Vec(3, UInt(5.W))
   val ldest = UInt(5.W)
+  val targetType = Vec(2, TargetType()) // Dataflow Target Type
+  val target = Vec(2, UInt(8.W)) // Dataflow Target ID
+  val PR = UInt(2.W) // Dataflow Predicate
+  val LSID = UInt(10.W)
   val fuType = FuType()
   val fuOpType = FuOpType()
   val rfWen = Bool()
@@ -165,6 +169,7 @@ class CtrlSignals(implicit p: Parameters) extends XSBundle {
   val blockBackward = Bool() // block backward
   val flushPipe = Bool() // This inst will flush all the pipe when commit, like exception but can commit
   val isRVF = Bool()
+  val isRVDataflow = Bool() // is Dataflow Instruction
   val selImm = SelImm()
   val imm = UInt(ImmUnion.maxLen.W)
   val commitType = CommitType()
