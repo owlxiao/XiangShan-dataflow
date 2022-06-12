@@ -158,7 +158,7 @@ class CtrlSignals(implicit p: Parameters) extends XSBundle {
   val ldest = UInt(5.W)
   val targetType = Vec(2, TargetType()) // Dataflow Target Type
   val target = Vec(2, UInt(8.W)) // Dataflow Target ID
-  val PR = UInt(2.W) // Dataflow Predicate
+  val PR = UInt(1.W) // Dataflow Predicate
   val LSID = UInt(10.W)
   val fuType = FuType()
   val fuOpType = FuOpType()
