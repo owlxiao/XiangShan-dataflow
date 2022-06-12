@@ -457,7 +457,43 @@ object XSTrapDecode extends DecodeConstants {
  * Dataflow Decode
  */
 object DataflowDecode extends DecodeConstants {
-  val table: Array[(BitPat, List[BitPat])] = Array()
+  val table: Array[(BitPat, List[BitPat])] = Array(
+    DF_SUB    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.sub        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_ADD    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.add        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SLL    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.sll        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SLT    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.slt        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SLTU   -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.sltu       , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_XOR    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.xor        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SRL    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.srl        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SRA    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.sra        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_OR     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.or         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_AND    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.and        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_MUL    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.mul, MDUOpType.mul        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_MULH   -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.mul, MDUOpType.mulh       , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_MULHSU -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.mul, MDUOpType.mulhsu     , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_MULHU  -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.mul, MDUOpType.mulhu      , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_DIV    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.div, MDUOpType.div        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_DIVU   -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.div, MDUOpType.divu       , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    REM       -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.div, MDUOpType.rem        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    REMU      -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.div, MDUOpType.remu       , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+
+    DF_LB     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.ldu, LSUOpType.lb         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_LH     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.ldu, LSUOpType.lh         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_LW     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.ldu, LSUOpType.lw         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_LD     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.ldu, LSUOpType.ld         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_LBU    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.ldu, LSUOpType.lbu        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_LHU    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.ldu, LSUOpType.lhu        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_LWU    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.ldu, LSUOpType.lwu        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SB     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.stu, LSUOpType.sb         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SH     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.stu, LSUOpType.sh         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SW     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.stu, LSUOpType.sw         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_SD     -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.stu, LSUOpType.sb         , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+
+    DF_BRANCH -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.jmp, JumpOpType.jal       , N, N, N, N, N, N, N, Y, SelImm.IMM_BD),
+
+    DF_MOV    -> List(TargetType.None, TargetType.None, SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, "b0000_000".U(7.W)   , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_READ   -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.DC, SrcType.DC, FuType.alu, "b0000_001".U(7.W)   , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+  )
 }
 
 //object Imm32Gen {
