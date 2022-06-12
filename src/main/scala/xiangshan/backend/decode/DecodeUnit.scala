@@ -123,7 +123,7 @@ object XDecode extends DecodeConstants {
 
     ADDI       -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.imm, SrcType.DC, FuType.alu, ALUOpType.add , Y, N, N, N, N, N, N, N, SelImm.IMM_I),
     ANDI       -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.imm, SrcType.DC, FuType.alu, ALUOpType.and , Y, N, N, N, N, N, N, N, SelImm.IMM_I),
-    ORI        -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.imm, SrcType.DC, FuType.alu, ALUOpType.o r , Y, N, N, N, N, N, N, N, SelImm.IMM_I),
+    ORI        -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.imm, SrcType.DC, FuType.alu, ALUOpType.or  , Y, N, N, N, N, N, N, N, SelImm.IMM_I),
     XORI       -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.imm, SrcType.DC, FuType.alu, ALUOpType.xor , Y, N, N, N, N, N, N, N, SelImm.IMM_I),
     SLTI       -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.imm, SrcType.DC, FuType.alu, ALUOpType.slt , Y, N, N, N, N, N, N, N, SelImm.IMM_I),
     SLTIU      -> List(TargetType.None, TargetType.None, SrcType.reg, SrcType.imm, SrcType.DC, FuType.alu, ALUOpType.sltu, Y, N, N, N, N, N, N, N, SelImm.IMM_I),
