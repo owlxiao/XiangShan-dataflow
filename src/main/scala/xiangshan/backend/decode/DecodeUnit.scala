@@ -61,12 +61,14 @@ trait DecodeUnitConstants
   val RS3_LSB = 27
 
   // Dataflow
-  val PR_LSB = 11
-  val PR_MSB = 11
-  val T1_LSB = 12
-  val T1_MSB = 21
-  val T2_LSB = 22
-  val T2_MSB = 31
+  val PR_LSB   = 11
+  val PR_MSB   = 11
+  val T1_LSB   = 12
+  val T1_MSB   = 21
+  val T2_LSB   = 22
+  val T2_MSB   = 31
+  val LSID_LSB = 12
+  val LSID_MSB = 21
 }
 
 /**
@@ -667,6 +669,8 @@ class DecodeUnit(implicit p: Parameters) extends XSModule with DecodeUnitConstan
   cs.target(1) := ctrl_flow.instr(T2_MSB, T2_LSB)
   // read predicate
   cs.PR := ctrl_flow.instr(PR_MSB, PR_LSB)
+  // read Load and Store Order ID
+  cs.LSID := ctrl_flow.instr(LSID_MSB, LSID_LSB)
 
   // fill in exception vector
   cf_ctrl.cf.exceptionVec := io.enq.ctrl_flow.exceptionVec
