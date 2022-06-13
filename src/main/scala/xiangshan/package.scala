@@ -84,7 +84,9 @@ package object xiangshan {
     def stu          = "b1101".U
     def mou          = "b1111".U // for amo, lr, sc, fence
 
-    def num = 14
+    def ANY          = "b10000".U
+
+    def num = 15
 
     def apply() = UInt(log2Up(num).W)
 
@@ -99,6 +101,7 @@ package object xiangshan {
     def isSvinvalBegin(fuType: UInt, func: UInt, flush: Bool) = isFence(fuType) && func === FenceOpType.nofence && !flush
     def isSvinval(fuType: UInt, func: UInt, flush: Bool) = isFence(fuType) && func === FenceOpType.sfence && !flush
     def isSvinvalEnd(fuType: UInt, func: UInt, flush: Bool) = isFence(fuType) && func === FenceOpType.nofence && flush
+    def isANY(fuType: UInt) = fuType(4)
 
 
     def jmpCanAccept(fuType: UInt) = !fuType(2)
@@ -328,8 +331,6 @@ package object xiangshan {
     def orcblsb    = "b110_0110".U
     def orcbzexth  = "b110_0111".U
 
-    def ANY        = "b111_0000".U
-
     def isAddw(func: UInt) = func(6, 4) === "b001".U && !func(3) && !func(1)
     def isSimpleLogic(func: UInt) = func(6, 4) === "b100".U && !func(0)
     def logicToLsb(func: UInt) = Cat("b110".U(3.W), func(3, 1), 0.U(1.W))
@@ -492,6 +493,11 @@ package object xiangshan {
 
     def sm3p0       = "b111000".U
     def sm3p1       = "b111001".U
+  }
+
+  object ANYOpType {
+    def read = "b0".U
+    def move = "b1".U
   }
 
   object BTBtype {

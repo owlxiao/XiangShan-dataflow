@@ -497,8 +497,8 @@ object DataflowDecode extends DecodeConstants {
 
     DF_BRANCH -> List(SrcType.DC , SrcType.DC, SrcType.DC, FuType.jmp, JumpOpType.jal       , N, N, N, N, N, N, N, Y, SelImm.IMM_BD),
 
-    DF_MOV    -> List(SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.ANY        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
-    DF_READ   -> List(SrcType.reg, SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.ANY        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_MOV    -> List(SrcType.DC , SrcType.DC, SrcType.DC, FuType.ANY, ANYOpType.move        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_READ   -> List(SrcType.reg, SrcType.DC, SrcType.DC, FuType.ANY, ANYOpType.read        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
   )
 }
 
@@ -720,6 +720,10 @@ class DecodeUnit(implicit p: Parameters) extends XSModule with DecodeUnitConstan
   when (cs.isXSTrap) {
     cs.lsrc(0) := XSTrapDecode.lsrc1
   }
+
+  // fix dataflow read -> move
+  val isDataflowRead = (cs.fuType === FuType.ANY) && (cs.fuOpType === ANYOpType.read)
+  cs.isMove := cs.isMove || (cs.isRVDataflow && isDataflowRead)
 
   //to selectout prefetch.r/prefetch.w
   val isORI = BitPat("b?????????????????110?????0010011") === ctrl_flow.instr
