@@ -497,8 +497,8 @@ object DataflowDecode extends DecodeConstants {
 
     DF_BRANCH -> List(SrcType.DC , SrcType.DC, SrcType.DC, FuType.jmp, JumpOpType.jal       , N, N, N, N, N, N, N, Y, SelImm.IMM_BD),
 
-    DF_MOV    -> List(SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, "b0000_000".U(7.W)   , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
-    DF_READ   -> List(SrcType.reg, SrcType.DC, SrcType.DC, FuType.alu, "b0000_001".U(7.W)   , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_MOV    -> List(SrcType.DC , SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.ANY        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
+    DF_READ   -> List(SrcType.reg, SrcType.DC, SrcType.DC, FuType.alu, ALUOpType.ANY        , N, N, N, N, N, N, N, Y, SelImm.IMM_X ),
   )
 }
 

@@ -328,6 +328,8 @@ package object xiangshan {
     def orcblsb    = "b110_0110".U
     def orcbzexth  = "b110_0111".U
 
+    def ANY        = "b111_0000".U
+
     def isAddw(func: UInt) = func(6, 4) === "b001".U && !func(3) && !func(1)
     def isSimpleLogic(func: UInt) = func(6, 4) === "b100".U && !func(0)
     def logicToLsb(func: UInt) = Cat("b110".U(3.W), func(3, 1), 0.U(1.W))
