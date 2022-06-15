@@ -73,6 +73,10 @@ trait DecodeUnitConstants
   val T1_SPEC_MSB = 21
   val T2_SPEC_LSB = 30
   val T2_SPEC_MSB = 31
+  val T1_REG_LSB = 12 // Target to Register
+  val T1_REG_MSB = 16
+  val T2_REG_LSB = 22
+  val T2_REG_MSB = 26
 }
 
 /**
@@ -724,6 +728,10 @@ class DecodeUnit(implicit p: Parameters) extends XSModule with DecodeUnitConstan
   // fix dataflow read -> move
   val isDataflowRead = (cs.fuType === FuType.ANY) && (cs.fuOpType === ANYOpType.read)
   cs.isMove := cs.isMove || (cs.isRVDataflow && isDataflowRead)
+
+  when (isDataflowRead) {
+    cs.lsrc(0) := ctrl_flow.instr(T1_REG_MSB. T1_REG_LSB)
+  }
 
   //to selectout prefetch.r/prefetch.w
   val isORI = BitPat("b?????????????????110?????0010011") === ctrl_flow.instr
